@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI API Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">AI API Hub</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="integrations-tab" data-bs-toggle="tab" data-bs-target="#integrations" type="button">Integrations</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="playground-tab" data-bs-toggle="tab" data-bs-target="#playground" type="button">Playground</button>
+            </li>
+        </ul>
+
+        <div class="tab-content mt-3" id="myTabContent">
+            <!-- Integrations Tab -->
+            <div class="tab-pane fade show active" id="integrations">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2>API Integrations</h2>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addIntegrationModal">
+                        <i class="fas fa-plus"></i> Add Integration
+                    </button>
+                </div>
+                
+                <div class="row" id="integrationsList">
+                    {% for integration in integrations %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ integration.name }}</h5>
+                                <p class="card-text">Status: 
+                                    <span class="badge bg-success">Connected</span>
+                                </p>
+                                <button class="btn btn-sm btn-primary">Configure</button>
+                                <button class="btn btn-sm btn-danger">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Playground Tab -->
+            <div class="tab-pane fade" id="playground">
+                <h2>AI Playground</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label">Select Integration</label>
+                            <select class="form-select" id="integrationSelect"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Select Model</label>
+                            <select class="form-select" id="modelSelect"></select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Prompt</label>
+                            <textarea class="form-control" id="promptInput" rows="5"></textarea>
+                        </div>
+                        <button class="btn btn-primary" id="generateBtn">Generate</button>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Result</label>
+                        <div class="border p-3 bg-white" style="min-height: 300px" id="resultOutput"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Integration Modal -->
+    <div class="modal fade" id="addIntegrationModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Integration</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="integrationForm">
+                        <div class="mb-3">
+                            <label class="form-label">Provider</label>
+                            <select class="form-select" id="providerSelect">
+                                {% for provider_id, provider in providers.items() %}
+                                <option value="{{ provider_id }}">{{ provider.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">API Key</label>
+                            <input type="password" class="form-control" id="apiKeyInput">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveIntegrationBtn">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Add your JavaScript code here for handling API calls and UI interactions
+    </script>
+</body>
+</html>

@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="{{ theme }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interface Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Keep existing styles */
+        {{ ... }}
+
+        /* Add new styles for custom integrations */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .integration-card {
+            background-color: var(--card-background);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .integration-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .integration-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .integration-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .integration-status {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            background-color: var(--hover-color);
+        }
+
+        .status-connected {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .custom-tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .custom-tab {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .custom-tab.active {
+            color: var(--primary-color);
+        }
+
+        .custom-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+
+        .add-integration-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .add-integration-btn:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .custom-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-group input, .form-group select {
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background-color: var(--card-background);
+            color: var(--text-primary);
+        }
+
+        .custom-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: var(--card-background);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px var(--shadow-color);
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <h1>AI Interface Hub</h1>
+            <div class="header-controls">
+                <button onclick="toggleApiSettings()" class="theme-toggle">API Settings</button>
+                <button onclick="toggleTheme()" class="theme-toggle">Toggle Theme</button>
+            </div>
+        </header>
+
+        <div class="custom-tab-container">
+            <button class="custom-tab active" onclick="switchTab('integrations')">Integrations</button>
+            <button class="custom-tab" onclick="switchTab('playground')">Playground</button>
+            <button class="custom-tab" onclick="switchTab('settings')">Settings</button>
+        </div>
+
+        <div id="integrations-tab" class="tab-content">
+            <div class="content-header">
+                <h2>Your API Integrations</h2>
+                <button class="add-integration-btn" onclick="showAddIntegrationModal()">Add New Integration</button>
+            </div>
+            <div class="integration-grid" id="integration-list">
+                <!-- Integration cards will be populated here -->
+            </div>
+        </div>
+
+        <div id="playground-tab" class="tab-content" style="display: none;">
+            <div class="main-content">
+                <div class="sidebar">
+                    <!-- Existing sidebar content -->
+                    {{ ... }}
+                </div>
+                <div class="content-area">
+                    <!-- Existing content area -->
+                    {{ ... }}
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-tab" class="tab-content" style="display: none;">
+            <div class="content-area">
+                <h2>Global Settings</h2>
+                <div class="custom-form">
+                    <div class="form-group">
+                        <label>Default Model</label>
+                        <select id="default-model">
+                            <!-- Will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>API Request Timeout (seconds)</label>
+                        <input type="number" id="timeout" value="30">
+                    </div>
+                    <div class="form-group">
+                        <label>Max Retries</label>
+                        <input type="number" id="max-retries" value="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Integration Modal -->
+    <div id="add-integration-modal" class="modal-backdrop" style="display: none;">
+        <div class="custom-modal">
+            <h2>Add New Integration</h2>
+            <div class="custom-form">
+                <div class="form-group">
+                    <label>Integration Type</label>
+                    <select id="integration-type" onchange="updateIntegrationForm()">
+                        <option value="custom">Custom API</option>
+                        <option value="abacus">Abacus.AI</option>
+                        <option value="zapier">Zapier AI</option>
+                        <option value="n8n">n8n</option>
+                        <option value="aws">AWS AI Services</option>
+                        <option value="gemini">Google Gemini</option>
+                    </select>
+                </div>
+                <div id="custom-integration-form">
+                    <!-- Will be populated based on selection -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Existing functions
+        {{ ... }}
+
+        // New functions for custom integrations
+        async function loadIntegrations() {
+            try {
+                const response = await fetch('/api/integrations');
+                const integrations = await response.json();
+                const container = document.getElementById('integration-list');
+                container.innerHTML = '';
+
+                integrations.forEach(integration => {
+                    container.appendChild(createIntegrationCard(integration));
+                });
+            } catch (error) {
+                console.error('Failed to load integrations:', error);
+            }
+        }
+
+        function createIntegrationCard(integration) {
+            const card = document.createElement('div');
+            card.className = 'integration-card';
+            card.innerHTML = `
+                <div class="integration-header">
+                    <span class="integration-title">${integration.name}</span>
+                    <span class="integration-status ${integration.has_api_key ? 'status-connected' : ''}">
+                        ${integration.has_api_key ? 'Connected' : 'Not Connected'}
+                    </span>
+                </div>
+                <p>${integration.description}</p>
+                <div class="integration-actions">
+                    <button onclick="configureIntegration('${integration.id}')" class="theme-toggle">
+                        Configure
+                    </button>
+                    <button onclick="testIntegration('${integration.id}')" class="theme-toggle">
+                        Test Connection
+                    </button>
+                </div>
+            `;
+            return card;
+        }
+
+        async function addIntegration(formData) {
+            try {
+                const response = await fetch('/api/integrations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    await loadIntegrations();
+                    hideAddIntegrationModal();
+                } else {
+                    const error = await response.json();
+                    alert(error.message);
+                }
+            } catch (error) {
+                console.error('Failed to add integration:', error);
+                alert('Failed to add integration');
+            }
+        }
+
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.style.display = 'none');
+            document.getElementById(`${tabName}-tab`).style.display = 'block';
+
+            const tabButtons = document.querySelectorAll('.custom-tab');
+            tabButtons.forEach(button => button.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function showAddIntegrationModal() {
+            document.getElementById('add-integration-modal').style.display = 'block';
+        }
+
+        function hideAddIntegrationModal() {
+            document.getElementById('add-integration-modal').style.display = 'none';
+        }
+
+        function updateIntegrationForm() {
+            const type = document.getElementById('integration-type').value;
+            const form = document.getElementById('custom-integration-form');
+            
+            if (type === 'custom') {
+                form.innerHTML = `
+                    <div class="form-group">
+                        <label>Integration Name</label>
+                        <input type="text" id="integration-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Base URL</label>
+                        <input type="url" id="base-url" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Authentication Type</label>
+                        <select id="auth-type">
+                            <option value="Bearer">Bearer Token</option>
+                            <option value="Api-Key">API Key</option>
+                            <option value="Basic">Basic Auth</option>
+                            <option value="Custom">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>API Key</label>
+                        <input type="password" id="api-key">
+                    </div>
+                `;
+            } else {
+                // Load predefined configuration
+                fetch(`/api/integrations/templates/${type}`)
+                    .then(response => response.json())
+                    .then(template => {
+                        form.innerHTML = `
+                            <div class="form-group">
+                                <label>API Key</label>
+                                <input type="password" id="api-key" required>
+                            </div>
+                        `;
+                    });
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadIntegrations();
+            updateIntegrationForm();
+        });
+    </script>
+</body>
+</html>

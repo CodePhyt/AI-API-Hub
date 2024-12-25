@@ -1,0 +1,122 @@
+{
+  "abacus": {
+    "name": "Abacus.AI",
+    "description": "AI model deployment and monitoring platform",
+    "base_url": "https://api.abacus.ai/v0",
+    "auth_type": "Bearer",
+    "endpoints": {
+      "test": "/auth/test",
+      "models": "/models/list",
+      "generate": "/models/predict"
+    },
+    "models": {
+      "text-generation": {
+        "name": "Text Generation",
+        "description": "Generate text using custom models",
+        "type": "text",
+        "endpoint": "/models/text/generate",
+        "default_parameters": {
+          "max_length": 100,
+          "temperature": 0.7
+        }
+      }
+    }
+  },
+  "zapier": {
+    "name": "Zapier AI",
+    "description": "AI-powered automation platform",
+    "base_url": "https://api.zapier.com/v1",
+    "auth_type": "Bearer",
+    "endpoints": {
+      "test": "/auth/validate",
+      "generate": "/ai/generate"
+    },
+    "models": {
+      "assistant": {
+        "name": "AI Assistant",
+        "description": "General purpose AI assistant",
+        "type": "chat",
+        "default_parameters": {
+          "temperature": 0.7,
+          "max_tokens": 150
+        }
+      }
+    }
+  },
+  "n8n": {
+    "name": "n8n AI",
+    "description": "Workflow automation with AI capabilities",
+    "base_url": "https://api.n8n.io/v1",
+    "auth_type": "Api-Key",
+    "endpoints": {
+      "test": "/status",
+      "generate": "/ai/process"
+    },
+    "models": {
+      "workflow-assistant": {
+        "name": "Workflow Assistant",
+        "description": "AI for workflow automation",
+        "type": "automation",
+        "default_parameters": {
+          "workflow_type": "default",
+          "automation_level": "basic"
+        }
+      }
+    }
+  },
+  "aws": {
+    "name": "AWS AI Services",
+    "description": "Amazon Web Services AI suite",
+    "base_url": "https://api.aws.amazon.com/v1",
+    "auth_type": "AWS4-HMAC-SHA256",
+    "endpoints": {
+      "test": "/validate",
+      "models": "/models/list",
+      "generate": "/generate"
+    },
+    "models": {
+      "bedrock": {
+        "name": "Amazon Bedrock",
+        "description": "Foundation models API",
+        "type": "multi-modal",
+        "endpoint": "/bedrock/invoke",
+        "default_parameters": {
+          "engine": "anthropic.claude-v2"
+        }
+      },
+      "sagemaker": {
+        "name": "SageMaker",
+        "description": "Custom model deployment",
+        "type": "custom",
+        "endpoint": "/sagemaker/invoke"
+      }
+    }
+  },
+  "gemini": {
+    "name": "Google Gemini",
+    "description": "Google's advanced AI model",
+    "base_url": "https://generativelanguage.googleapis.com/v1",
+    "auth_type": "Bearer",
+    "endpoints": {
+      "generate": "/models/gemini-pro:generateContent"
+    },
+    "models": {
+      "gemini-pro": {
+        "name": "Gemini Pro",
+        "description": "Advanced language model",
+        "type": "multi-modal",
+        "default_parameters": {
+          "temperature": 0.7,
+          "maxOutputTokens": 2048
+        },
+        "payload_format": {
+          "contents": [{
+            "parts": [{
+              "text": "$prompt"
+            }]
+          }]
+        }
+      }
+    }
+  }
+}
